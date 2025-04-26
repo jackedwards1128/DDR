@@ -11,8 +11,10 @@ public class Button {
     private String text;
     private Color color;
     private Font bigFont;
+    private String function;
+    private boolean visible;
 
-    public Button(FrontEnd window, int x, int y, int width, int height, String text, Color color) {
+    public Button(FrontEnd window, int x, int y, int width, int height, String text, Color color, String function) {
         this.window = window;
         this.x = x;
         this.y = y;
@@ -21,28 +23,52 @@ public class Button {
         this.text = text;
         this.color = color;
         this.bigFont = new Font("arial", Font.PLAIN, 60);
+        this.function = function;
+        this.visible = true;
     }
 
     public void draw(Graphics g) {
-        g.setColor(color);
-        g.fillRect(x, y, width, height);
-        g.setColor(Color.white);
-        g.setFont(bigFont);
+        if (visible) {
+            g.setColor(color);
+            g.fillRect(x, y, width, height);
+            g.setColor(Color.white);
+            g.setFont(bigFont);
 
-        double strLength = text.length();
+            double strLength = text.length();
 
-        int pixLength = (int)((bigFont.getSize() * strLength) / 2);
+            int pixLength = (int)((bigFont.getSize() * strLength) / 2);
 
-        g.drawString(text, x + ((width - pixLength) / 2), y+height - ((height-bigFont.getSize()) / 2));
+            g.drawString(text, x + ((width - pixLength) / 2), y+height - ((height-bigFont.getSize()) / 2));
+        }
     }
 
     public boolean isClicked(int cx, int cy) {
-        if (cx < x || cx > x+ width) {
-            return false;
+        if (visible) {
+            if (cx < x || cx > x+ width) {
+                return false;
+            }
+            if (cy < y || cy > y + height) {
+                return false;
+            }
+            return true;
         }
-        if (cy < y || cy > y + height) {
-            return false;
-        }
-        return true;
+        return false;
+
+    }
+
+    public void show() {
+        visible = true;
+    }
+
+    public void hide() {
+        visible = false;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public String getFunction() {
+        return function;
     }
 }

@@ -24,16 +24,16 @@ public class Effect {
         int offset = 0;
         switch (arrow) {
             case 0:
-                g.drawImage(image, offset + 80, 35, 170, 170, window);
+                g.drawImage(image, offset + 87, 111, 160, 160, window);
                 break;
             case 1:
-                g.drawImage(image, offset + 241, 35, 170, 170, window);
+                g.drawImage(image, offset + 246, 113, 160, 160, window);
                 break;
             case 2:
-                g.drawImage(image, offset + 402, 210, 170, -170, window);
+                g.drawImage(image, offset + 408, 273, 160, -160, window);
                 break;
             case 3:
-                g.drawImage(image, offset + 740, 35, -170, 170, window);
+                g.drawImage(image, offset + 734, 113, -160, 160, window);
                 break;
         }
     }

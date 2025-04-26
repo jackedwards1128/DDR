@@ -21,18 +21,33 @@ public class FrontEnd extends JFrame {
 
     private ArrayList<Button> buttons;
 
-    private Button startButton;
+    private ArrayList<Double> unce;
+    private double unceCooldown;
+
+    private int testbpm = 132;
+//    private Color low = new Color(150, 150, 150);
+//    private Color low = new Color(70, 80, 90);
+    private Color low = Color.white;
+    private Color high = new Color(240, 200, 200);
 
     public FrontEnd (Game backend) {
         this.backend = backend;
+        this.buttons = new ArrayList<Button>();
+        this.unce = new ArrayList<Double>();
+        this.unceCooldown = 0;
 
-        startButton = new Button(this, 430, 400, 600, 200, "Start game", Color.black);
+        buttons.add(new Button(this, 700, 400, 600, 200, "Start Game", Color.black, "start"));
+        buttons.add(new Button(this, 700, 700, 600, 200, "Start 2 Player Game", Color.black, "twoplayer"));
+        buttons.add(new Button(this, 700, 100, 600, 200, "Map Song", Color.red, "map"));
+        buttons.add(new Button(this, 1170, 50, 300, 150, "Exit Song", Color.red, "exit"));
+        buttons.add(new Button(this, 150, 100, 400, 95, "Trap Queen ", Color.lightGray, "trapqueen"));
+        buttons.add(new Button(this, 150, 210, 400, 95, "Nokia", Color.lightGray, "nokia"));
+        buttons.add(new Button(this, 150, 320, 400, 95, "Take U", Color.lightGray, "takeu"));
 
         this.fx = new ArrayList<Effect>();
 
-        this.buttons = new ArrayList<Button>();
 
-        buttons.add(startButton);
+
 
         this.arrowImages = new Image[5];
         this.effectImages = new Image[7];
@@ -56,6 +71,7 @@ public class FrontEnd extends JFrame {
         this.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         this.setVisible(true);
         createBufferStrategy(2);
+        repaint();
     }
 
     public void paint(Graphics g) {
@@ -75,16 +91,27 @@ public class FrontEnd extends JFrame {
     }
 
     public void myPaint(Graphics g) {
-        if (state == "single player song") {
-            g.setColor(Color.white);
+        if (state == "single player song" || state == "two player song") {
+//            if (backend.isMappingMode())
+                g.setColor(Color.white);
+//            else
+//                g.setColor(unceUnceUnceUnce());
+
             g.fillRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-            g.drawImage(arrowImages[4], 95, 50, 630, 150, this);
+            if (state == "single player song")
+                g.drawImage(arrowImages[4], 95, 120, 630, 150, this);
+            else {
+                g.drawImage(arrowImages[4], 40, 120, 630, 150, this);
+                g.drawImage(arrowImages[4], 840, 120, 630, 150, this);
+            }
+
+
 
             Font smallFont = new Font("arial", Font.PLAIN, 70);
             g.setColor(Color.black);
             g.setFont(smallFont);
-            g.drawString("Score: " + backend.getScore(), 900, 200);
+            g.drawString("Score: " + backend.getScore(), 100, 100);
 
             for (Arrow arrow : backend.getUpcomingArrows()) {
                 arrow.draw(g);
@@ -98,12 +125,68 @@ public class FrontEnd extends JFrame {
             for (Effect fX: fx) {
                 fX.draw(g);
             }
+            for (Button b : buttons) {
+                switch(b.getFunction()) {
+                    case "start":
+                    case "twoplayer":
+                    case "map":
+                    case "trapqueen":
+                    case "nokia":
+                    case "takeu":
+                        b.hide();
+                        break;
+                    case "exit":
+                        if (state == "single player song")
+                            b.show();
+                        else
+                            b.hide();
+                        break;
+                }
+                if (b.isVisible()) {
+                    b.draw(g);
+                }
+            }
         } else if (state == "menu") {
             g.setColor(Color.darkGray);
             g.fillRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
-            startButton.draw(g);
+            for (Button b : buttons) {
+                switch(b.getFunction()) {
+                    case "start":
+                    case "twoplayer":
+                    case "map":
+                    case "trapqueen":
+                    case "nokia":
+                    case "takeu":
+                        b.show();
+                        break;
+                    case "exit":
+                        b.hide();
+                        break;
+                }
+                b.draw(g);
+            }
         }
 
+
+    }
+
+    public Color unceUnceUnceUnce() {
+
+        if (unceCooldown > 0)
+            unceCooldown--;
+
+        if (Math.abs(unce.get(0) - backend.getTime()) < 0.03) {
+            unceCooldown = 20;
+            unce.remove(0);
+        }
+
+        double interpolate = 1 - (unceCooldown/20.0);
+
+        double red = (low.getRed() * interpolate) + (high.getRed() * (1-interpolate));
+        double green = (low.getGreen() * interpolate) + (high.getGreen() * (1-interpolate));
+        double blue = (low.getBlue() * interpolate) + (high.getBlue() * (1-interpolate));
+
+        return new Color((int)red, (int)green, (int)blue);
     }
 
     public void setState(String state) {
@@ -116,5 +199,31 @@ public class FrontEnd extends JFrame {
 
     public ArrayList<Button> getButtons() {
         return buttons;
+    }
+
+    public void loadUnce() {
+        String unces = backend.getSong().getUnceString();
+        while (unces.indexOf("U") != -1 && unces.length() != 1) {
+            System.out.println(unces);
+            unces = unces.substring(1);
+            System.out.println(unces);
+            double time = Float.parseFloat(unces.substring(0,unces.indexOf("U"))) / 100;
+            unces = unces.substring(unces.indexOf("U"));
+            System.out.println(unces);
+            unce.add(time);
+        }
+        System.out.println(unce.size());
+    }
+
+    public void deleteEffects() {
+        fx.clear();
+    }
+
+    public boolean isTwoPlayerSync() {
+        // note: will have seperate state for async 2 player (luther)
+        if(state == "two player song") {
+            return true;
+        }
+        return false;
     }
 }

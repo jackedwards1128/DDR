@@ -30,6 +30,7 @@ public class Arrow {
         this.direction = direction;
         this.hitTime = hitTime;
         setArrowImage();
+        System.out.println("ive been made " + hitTime);
     }
 
     public void setArrowImage() {
@@ -47,10 +48,15 @@ public class Arrow {
 
     public void draw(Graphics g) {
 
-        int drawYPos = (int)(50 + (hitTime - backend.getTime()) * backend.getArrowSpeed());
+        int drawYPos = (int)(120 + (hitTime - backend.getTime()) * backend.getArrowSpeed());
 
         if (drawYPos < 1000) {
-            g.drawImage(arrowImage, (direction*161) + 100, drawYPos, 140,140, window);
+            if (!window.isTwoPlayerSync())
+                g.drawImage(arrowImage, (direction*161) + 100, drawYPos, 140,140, window);
+            else {
+                g.drawImage(arrowImage, (direction*161) + 45, drawYPos, 140,140, window);
+                g.drawImage(arrowImage, (direction*161) + 845, drawYPos, 140,140, window);
+            }
         }
 
     }
