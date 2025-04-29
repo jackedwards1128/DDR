@@ -7,6 +7,7 @@ public class Arrow {
     private double hitTime;
     private Game backend;
     private FrontEnd window;
+    private boolean secondPlayer;
 
     public Arrow(Game backend, FrontEnd window) {
         this.backend = backend;
@@ -24,11 +25,12 @@ public class Arrow {
         setArrowImage();
     }
 
-    public Arrow(Game backend, FrontEnd window, int direction, double hitTime) {
+    public Arrow(Game backend, FrontEnd window, int direction, double hitTime, boolean second) {
         this.backend = backend;
         this.window = window;
         this.direction = direction;
         this.hitTime = hitTime;
+        this.secondPlayer = second;
         setArrowImage();
         System.out.println("ive been made " + hitTime);
     }
@@ -51,12 +53,14 @@ public class Arrow {
         int drawYPos = (int)(120 + (hitTime - backend.getTime()) * backend.getArrowSpeed());
 
         if (drawYPos < 1000) {
-            if (!window.isTwoPlayerSync())
+            if (window.getGameState() == "two player song") {
+                if (secondPlayer)
+                    g.drawImage(arrowImage, (direction*161) + 45, drawYPos, 140,140, window);
+                else
+                    g.drawImage(arrowImage, (direction*161) + 845, drawYPos, 140,140, window);
+            } else
                 g.drawImage(arrowImage, (direction*161) + 100, drawYPos, 140,140, window);
-            else {
-                g.drawImage(arrowImage, (direction*161) + 45, drawYPos, 140,140, window);
-                g.drawImage(arrowImage, (direction*161) + 845, drawYPos, 140,140, window);
-            }
+
         }
 
     }

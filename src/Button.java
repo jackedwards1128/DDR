@@ -56,6 +56,11 @@ public class Button {
 
     }
 
+    public void changePosition(int newX, int newY) {
+        x = newX;
+        y = newY;
+    }
+
     public void show() {
         visible = true;
     }

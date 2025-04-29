@@ -36,13 +36,15 @@ public class FrontEnd extends JFrame {
         this.unce = new ArrayList<Double>();
         this.unceCooldown = 0;
 
+        buttons.add(new Button(this, 1170, 50, 300, 90, "Exit Song", Color.red, "exit"));
         buttons.add(new Button(this, 700, 400, 600, 200, "Start Game", Color.black, "start"));
         buttons.add(new Button(this, 700, 700, 600, 200, "Start 2 Player Game", Color.black, "twoplayer"));
         buttons.add(new Button(this, 700, 100, 600, 200, "Map Song", Color.red, "map"));
-        buttons.add(new Button(this, 1170, 50, 300, 150, "Exit Song", Color.red, "exit"));
         buttons.add(new Button(this, 150, 100, 400, 95, "Trap Queen ", Color.lightGray, "trapqueen"));
         buttons.add(new Button(this, 150, 210, 400, 95, "Nokia", Color.lightGray, "nokia"));
         buttons.add(new Button(this, 150, 320, 400, 95, "Take U", Color.lightGray, "takeu"));
+        buttons.add(new Button(this, 150, 430, 400, 95, "Luther", Color.lightGray, "luther"));
+        buttons.add(new Button(this, 150, 540, 400, 95, "test", Color.lightGray, "testnotes"));
 
         this.fx = new ArrayList<Effect>();
 
@@ -111,9 +113,20 @@ public class FrontEnd extends JFrame {
             Font smallFont = new Font("arial", Font.PLAIN, 70);
             g.setColor(Color.black);
             g.setFont(smallFont);
-            g.drawString("Score: " + backend.getScore(), 100, 100);
+            if (state == "two player song") {
+                if (backend.getSong().getName() == "luther") {
+                    g.drawString("Score: " + (backend.getScoreSecond() + backend.getScore()), 100, 100);
+                } else {
+                    g.drawString("Score: " + backend.getScoreSecond(), 100, 100);
+                    g.drawString("Score: " + backend.getScore(), 900, 100);
+                }
+            } else
+                g.drawString("Score: " + backend.getScore(), 100, 100);
 
             for (Arrow arrow : backend.getUpcomingArrows()) {
+                arrow.draw(g);
+            }
+            for (Arrow arrow : backend.getUpcomingArrowsSecond()) {
                 arrow.draw(g);
             }
 
@@ -133,13 +146,12 @@ public class FrontEnd extends JFrame {
                     case "trapqueen":
                     case "nokia":
                     case "takeu":
+                    case "luther":
+                    case "testnotes":
                         b.hide();
                         break;
                     case "exit":
-                        if (state == "single player song")
-                            b.show();
-                        else
-                            b.hide();
+                        b.show();
                         break;
                 }
                 if (b.isVisible()) {
@@ -157,10 +169,34 @@ public class FrontEnd extends JFrame {
                     case "trapqueen":
                     case "nokia":
                     case "takeu":
+                    case "luther":
+                    case "testnotes":
                         b.show();
                         break;
                     case "exit":
                         b.hide();
+                        break;
+                }
+                b.draw(g);
+            }
+        } else if (state == "song over") {
+            g.setColor(Color.darkGray);
+            g.fillRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+            Font biggerFont = new Font("arial", Font.PLAIN, 60);
+            g.setColor(Color.white);
+            g.setFont(biggerFont);
+            if (backend.getScoreSecond() > 0) {
+                g.drawString("Song over!" , 400, 300);
+                g.drawString("Right side got a score of " + backend.getScore() , 300, 400);
+                g.drawString("Left side got a score of " + backend.getScoreSecond(), 300, 500);
+            } else
+                g.drawString("Song over! You got a score of " + backend.getScore(), 300, 300);
+
+            for (Button b : buttons) {
+                switch(b.getFunction()) {
+                    case "exit":
+                        b.show();
                         break;
                 }
                 b.draw(g);
@@ -193,8 +229,12 @@ public class FrontEnd extends JFrame {
         this.state = state;
     }
 
-    public void createEffect(int type, int arrow, double time) {
-        fx.add(new Effect(this, type, arrow, time));
+    public String getGameState() {
+        return state;
+    }
+
+    public void createEffect(int type, int arrow, double time, boolean second) {
+        fx.add(new Effect(this, type, arrow, time, second));
     }
 
     public ArrayList<Button> getButtons() {
@@ -217,6 +257,14 @@ public class FrontEnd extends JFrame {
 
     public void deleteEffects() {
         fx.clear();
+    }
+
+    public void switchExitSpot() {
+        if (state == "two player song")
+            buttons.get(0).changePosition(580, 20);
+        else
+            buttons.get(0).changePosition(1170, 50);
+
     }
 
     public boolean isTwoPlayerSync() {

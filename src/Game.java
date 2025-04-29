@@ -13,13 +13,18 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
     private double averageTimeGap;
     private double arrowSpeed = 700;
     private ArrayList<Arrow> upcomingArrows;
+    private ArrayList<Arrow> upcomingArrowsSecond;
     private Song song;
     private static final int MILLISECOND = 1000;
     private static final int DIVISOR = 70;
+    private int tick = 0;
     private int score;
+    private int scoreSecond;
     private double BPM;
+    private boolean songEnded;
 
     private String mapString;
+    private String mapString2;
     private String unceString;
     private boolean mappingMode;
     private int mapChunk;
@@ -34,19 +39,24 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
         window.addMouseMotionListener(this);
 
         this.mapString = "";
+        this.mapString2 = "";
         this.unceString = "";
         this.mappingMode = false;
         this.mapChunk = 0;
         this.time = 0;
+        this.songEnded = false;
 //        this.arduino = new ArduinoParser(this);
         this.averageTimeGap = 20;
         this.score = 0;
         this.BPM = 148;
         this.upcomingArrows = new ArrayList<Arrow>();
+        this.upcomingArrowsSecond = new ArrayList<Arrow>();
 
 //        song = new Song(this,"music/Fetty Wap - Trap Queen.wav", "trapqueen");
+        song = new Song(this,"music/Skrt Skrt With Quavo !!! Shorts rap Migos Quavo.wav", "testnotes");
 //        song = new Song(this, "music/NOKIA.wav", "nokia");
-        song = new Song(this, "music/Jengi - Take U.wav", "takeu");
+//        song = new Song(this, "music/Jengi - Take U.wav", "takeu");
+//        song = new Song(this, "music/Kendrick Lamar - luther.wav", "luther");
 
         mappingMode = false;
 
@@ -58,19 +68,25 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
 
     public void StopMusic() {
-        if(this.jukebox.getIsPlaybackComplete()) {
-            System.out.println("Done with the song!");
-            try {
-                this.jukebox.getAudioClip().close();
-                this.jukebox.getAudioStream().close();
-            } catch (IOException error) {
-                System.out.println(error.getMessage());
-                return;
+        if (!songEnded) {
+            if(this.jukebox.getIsPlaybackComplete()) {
+                System.out.println("Song over");
+                try {
+                    this.jukebox.getAudioClip().close();
+                    this.jukebox.getAudioStream().close();
+                    window.setState("song over");
+                    songEnded = true;
+                } catch (IOException error) {
+                    System.out.println(error.getMessage());
+                    return;
+                }
             }
         }
     }
 
     public void actionPerformed(ActionEvent e) {
+
+        tick++;
 
         window.repaint();
 
@@ -85,10 +101,21 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
             time += averageTimeGap / 1000;
         }
 
+        if(upcomingArrows.size() == 0 && upcomingArrowsSecond.size() == 0) {
+            StopMusic();
+        }
+
         if (upcomingArrows.size() > 0) {
             if (time - upcomingArrows.get(0).getHitTime() > 0.2) {
                 upcomingArrows.remove(0);
                 score -= 150;
+            }
+        }
+
+        if (upcomingArrowsSecond.size() > 0) {
+            if (time - upcomingArrowsSecond.get(0).getHitTime() > 0.2) {
+                upcomingArrowsSecond.remove(0);
+                scoreSecond -= 150;
             }
         }
     }
@@ -122,6 +149,23 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                 checkTiming(3);
                 break;
         }
+        if(window.getGameState().equals("two player song")) {
+            switch(e.getKeyCode())
+            {
+                case KeyEvent.VK_A:
+                    checkTiming(4);
+                    break;
+                case KeyEvent.VK_S:
+                    checkTiming(5);
+                    break;
+                case KeyEvent.VK_W:
+                    checkTiming(6);
+                    break;
+                case KeyEvent.VK_D:
+                    checkTiming(7);
+                    break;
+            }
+        }
         if(mappingMode) {
             switch(e.getKeyCode())
             {
@@ -139,6 +183,21 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                     break;
                 case KeyEvent.VK_SPACE:
                     map(-1);
+                    break;
+            }
+            switch(e.getKeyCode())
+            {
+                case KeyEvent.VK_A:
+                    map(4);
+                    break;
+                case KeyEvent.VK_S:
+                    map(5);
+                    break;
+                case KeyEvent.VK_W:
+                    map(6);
+                    break;
+                case KeyEvent.VK_D:
+                    map(7);
                     break;
             }
         }
@@ -168,8 +227,10 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                         clock.start();
 
                         jukebox.play(song.getMusic());
+                        songEnded = false;
                         millis = System.currentTimeMillis() % 1000;
                         b.hide();
+                        window.switchExitSpot();
                         break;
                     case "twoplayer":
                         window.setState("two player song");
@@ -183,7 +244,9 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                         clock.start();
 
                         jukebox.play(song.getMusic());
+                        songEnded = false;
                         millis = System.currentTimeMillis() % 1000;
+                        window.switchExitSpot();
                         b.hide();
                         break;
                     case "map":
@@ -197,14 +260,18 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                         clock.start();
 
                         jukebox.play(song.getMusic());
+                        songEnded = false;
                         millis = System.currentTimeMillis() % 1000;
+                        window.switchExitSpot();
                         b.hide();
                         break;
                     case "exit":
+                        songEnded = true;
                         window.setState("menu");
                         clock.stop();
                         time = 0;
                         score = 0;
+                        scoreSecond = 0;
                         upcomingArrows.clear();
 
                         try {
@@ -228,6 +295,12 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                     case "takeu":
                         song = new Song(this, "music/Jengi - Take U.wav", "takeu");
                         break;
+                    case "luther":
+                        song = new Song(this, "music/Kendrick Lamar - luther.wav", "luther");
+                        break;
+                    case "testnotes":
+                        song = new Song(this,"music/Skrt Skrt With Quavo !!! Shorts rap Migos Quavo.wav", "testnotes");
+                        break;
                 }
 
             }
@@ -235,12 +308,25 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
     }
 
     public void loadArrows() {
-        song.loadSongMapping(song.getName());
         if(mappingMode == false) {
+            if (song.getName() != "luther") {
+                song.loadSongMapping(song.getName());
 
-            boolean moreToMap = true;
-            while (moreToMap) {
-                moreToMap = song.parseMapString();
+                boolean moreToMap = true;
+                while (moreToMap) {
+                    moreToMap = song.parseMapString(false, false);
+                }
+            } else {
+                song.loadSongMapping("luther1");
+                boolean moreToMap = true;
+                while (moreToMap) {
+                    moreToMap = song.parseMapString(true, false);
+                }
+                song.loadSongMapping("luther2");
+                moreToMap = true;
+                while (moreToMap) {
+                    moreToMap = song.parseMapString(true, true);
+                }
             }
         }
     }
@@ -276,40 +362,79 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
     public void checkTiming(int direction) {
         Arrow nextInDirection = null;
-        int i = 0;
-        while(i < upcomingArrows.size()) {
-            if (upcomingArrows.get(i).getDirection() == direction) {
-                nextInDirection = upcomingArrows.get(i);
-                break;
+        if (direction < 4) {
+            int i = 0;
+            while(i < upcomingArrows.size()) {
+                if (upcomingArrows.get(i).getDirection() == direction) {
+                    nextInDirection = upcomingArrows.get(i);
+                    break;
+                }
+                i++;
             }
-            i++;
+            if (nextInDirection == null) {
+                return;
+            }
+            if (Math.abs(nextInDirection.getHitTime() - time) > 0.3) {
+                score -= 250;
+                window.createEffect(3, direction, time, false);
+                return;
+            }
+            if (Math.abs(nextInDirection.getHitTime() - time) < 0.03) {
+                score += 300;
+                window.createEffect(2, direction, time, false);
+                upcomingArrows.remove(i);
+                return;
+            }
+            if (Math.abs(nextInDirection.getHitTime() - time) < 0.1) {
+                score += 200;
+                window.createEffect(1, direction, time, false);
+                upcomingArrows.remove(i);
+                return;
+            }
+            if (Math.abs(nextInDirection.getHitTime() - time) < 0.3) {
+                score += 100;
+                window.createEffect(0, direction, time, false);
+                upcomingArrows.remove(i);
+                return;
+            }
+        } else {
+            int equiv_dir = direction - 4;
+            int i = 0;
+            while(i < upcomingArrowsSecond.size()) {
+                if (upcomingArrowsSecond.get(i).getDirection() == equiv_dir) {
+                    nextInDirection = upcomingArrowsSecond.get(i);
+                    break;
+                }
+                i++;
+            }
+            if (nextInDirection == null) {
+                return;
+            }
+            if (Math.abs(nextInDirection.getHitTime() - time) > 0.3) {
+                scoreSecond -= 250;
+                window.createEffect(3, equiv_dir, time, true);
+                return;
+            }
+            if (Math.abs(nextInDirection.getHitTime() - time) < 0.03) {
+                scoreSecond += 300;
+                window.createEffect(2, equiv_dir, time, true);
+                upcomingArrowsSecond.remove(i);
+                return;
+            }
+            if (Math.abs(nextInDirection.getHitTime() - time) < 0.1) {
+                scoreSecond += 200;
+                window.createEffect(1, equiv_dir, time, true);
+                upcomingArrowsSecond.remove(i);
+                return;
+            }
+            if (Math.abs(nextInDirection.getHitTime() - time) < 0.3) {
+                scoreSecond += 100;
+                window.createEffect(0, equiv_dir, time, true);
+                upcomingArrowsSecond.remove(i);
+                return;
+            }
         }
-        if (nextInDirection == null) {
-            return;
-        }
-        if (Math.abs(nextInDirection.getHitTime() - time) > 0.3) {
-            score -= 250;
-            window.createEffect(3, direction, time);
-            return;
-        }
-        if (Math.abs(nextInDirection.getHitTime() - time) < 0.03) {
-            score += 300;
-            window.createEffect(2, direction, time);
-            upcomingArrows.remove(i);
-            return;
-        }
-        if (Math.abs(nextInDirection.getHitTime() - time) < 0.1) {
-            score += 200;
-            window.createEffect(1, direction, time);
-            upcomingArrows.remove(i);
-            return;
-        }
-        if (Math.abs(nextInDirection.getHitTime() - time) < 0.3) {
-            score += 100;
-            window.createEffect(0, direction, time);
-            upcomingArrows.remove(i);
-            return;
-        }
+
 
     }
 
@@ -318,15 +443,24 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
             unceString += "U" + Math.round(time * 100);
             return;
         }
-        mapString += "A" + Math.round(time * 100) + "T" + dir;
+        if (dir < 4)
+            mapString += "A" + Math.round(time * 100) + "T" + dir;
+        else
+            mapString2 += "A" + Math.round(time * 100) + "T" + (dir-4);
+
     }
 
     public void mapPrint() {
         System.out.println("mapping: " + mapString);
+        System.out.println("mapping2: " + mapString2);
     }
 
-    public void addArrow(double hitTime, int dir) {
-        upcomingArrows.add(new Arrow(this, window, dir, hitTime));
+    public void addArrow(double hitTime, int dir, boolean second) {
+        if (second) {
+            upcomingArrowsSecond.add(new Arrow(this, window, dir, hitTime, true));
+        } else
+            upcomingArrows.add(new Arrow(this, window, dir, hitTime, false));
+
     }
 
     public void acceptData(String data) {
@@ -347,8 +481,16 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
         return arrowSpeed;
     }
 
+    public FrontEnd getWindow() {
+        return window;
+    }
+
     public int getScore() {
         return score;
+    }
+
+    public int getScoreSecond() {
+        return scoreSecond;
     }
 
     public Song getSong() {
@@ -361,6 +503,10 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
     public ArrayList<Arrow> getUpcomingArrows() {
         return upcomingArrows;
+    }
+
+    public ArrayList<Arrow> getUpcomingArrowsSecond() {
+        return upcomingArrowsSecond;
     }
 
     public static void main(String[] args) {
