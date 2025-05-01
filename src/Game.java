@@ -68,18 +68,16 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
 
     public void StopMusic() {
-        if (!songEnded) {
-            if(this.jukebox.getIsPlaybackComplete()) {
-                System.out.println("Song over");
-                try {
-                    this.jukebox.getAudioClip().close();
-                    this.jukebox.getAudioStream().close();
-                    window.setState("song over");
-                    songEnded = true;
-                } catch (IOException error) {
-                    System.out.println(error.getMessage());
-                    return;
-                }
+        if(this.jukebox.getIsPlaybackComplete()) {
+            System.out.println("Song over");
+            try {
+                this.jukebox.getAudioClip().close();
+                this.jukebox.getAudioStream().close();
+                window.setState("song over");
+                songEnded = true;
+            } catch (IOException error) {
+                System.out.println(error.getMessage());
+                return;
             }
         }
     }
@@ -100,6 +98,8 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
         } else {
             time += averageTimeGap / 1000;
         }
+
+
 
         if(upcomingArrows.size() == 0 && upcomingArrowsSecond.size() == 0) {
             StopMusic();
@@ -219,9 +219,10 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
                         mappingMode = false;
 
-                        loadArrows();
+                        upcomingArrows.clear();
+                        upcomingArrowsSecond.clear();
 
-                        window.loadUnce();
+                        loadArrows();
 
                         clock = new Timer(MILLISECOND/ DIVISOR, this);
                         clock.start();
@@ -229,14 +230,17 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                         jukebox.play(song.getMusic());
                         songEnded = false;
                         millis = System.currentTimeMillis() % 1000;
-                        b.hide();
                         window.switchExitSpot();
+                        b.hide();
                         break;
                     case "twoplayer":
                         window.setState("two player song");
                         time = 0;
 
                         mappingMode = false;
+
+                        upcomingArrows.clear();
+                        upcomingArrowsSecond.clear();
 
                         loadArrows();
 

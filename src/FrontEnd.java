@@ -37,14 +37,23 @@ public class FrontEnd extends JFrame {
         this.unceCooldown = 0;
 
         buttons.add(new Button(this, 1170, 50, 300, 90, "Exit Song", Color.red, "exit"));
-        buttons.add(new Button(this, 700, 400, 600, 200, "Start Game", Color.black, "start"));
-        buttons.add(new Button(this, 700, 700, 600, 200, "Start 2 Player Game", Color.black, "twoplayer"));
-        buttons.add(new Button(this, 700, 100, 600, 200, "Map Song", Color.red, "map"));
-        buttons.add(new Button(this, 150, 100, 400, 95, "Trap Queen ", Color.lightGray, "trapqueen"));
-        buttons.add(new Button(this, 150, 210, 400, 95, "Nokia", Color.lightGray, "nokia"));
-        buttons.add(new Button(this, 150, 320, 400, 95, "Take U", Color.lightGray, "takeu"));
-        buttons.add(new Button(this, 150, 430, 400, 95, "Luther", Color.lightGray, "luther"));
-        buttons.add(new Button(this, 150, 540, 400, 95, "test", Color.lightGray, "testnotes"));
+
+        buttons.add(new Button(this, 950, 100, 450, 200, "Map Song", Color.red, "map"));
+        buttons.add(new Button(this, 950, 400, 450, 200, "Start Game", Color.black, "start"));
+        buttons.add(new Button(this, 890, 700, 600, 200, "Start 2 Player Game", Color.black, "twoplayer"));
+
+        buttons.add(new Button(this, 50, 60, 400, 95, "Trap Queen ", Color.lightGray, "trapqueen"));
+        buttons.add(new Button(this, 50, 170, 400, 95, "Nokia", Color.lightGray, "nokia"));
+        buttons.add(new Button(this, 50, 280, 400, 95, "Take U", Color.lightGray, "takeu"));
+        buttons.add(new Button(this, 50, 390, 400, 95, "Luther", Color.lightGray, "luther"));
+        buttons.add(new Button(this, 50, 500, 400, 95, "test", Color.lightGray, "testnotes"));
+        buttons.add(new Button(this, 50, 610, 400, 95, "Dark Thoughts", Color.lightGray, "darkthoughts"));
+        buttons.add(new Button(this, 50, 720, 400, 95, "Unwritten", Color.lightGray, "unwritten"));
+        buttons.add(new Button(this, 50, 830, 400, 95, "Tweaker", Color.lightGray, "tweaker"));
+        buttons.add(new Button(this, 480, 60, 400, 95, "Darling, I", Color.lightGray, "darlingI"));
+        buttons.add(new Button(this, 480, 170, 400, 95, "The Spins", Color.lightGray, "thespins"));
+        buttons.add(new Button(this, 480, 280, 400, 95, "Von Dutch", Color.lightGray, "vondutch"));
+        buttons.add(new Button(this, 480, 390, 400, 95, "Under Your Spell", Color.lightGray, "underyourspell"));
 
         this.fx = new ArrayList<Effect>();
 

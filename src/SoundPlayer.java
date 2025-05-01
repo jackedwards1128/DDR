@@ -21,6 +21,7 @@ public class SoundPlayer implements LineListener {
     public void update(LineEvent event) {
         // Receives line events
         if (LineEvent.Type.START == event.getType()) {
+            isPlaybackComplete = false;
             System.out.println("Playback started.");
         } else if (LineEvent.Type.STOP == event.getType()) {
             isPlaybackComplete = true;

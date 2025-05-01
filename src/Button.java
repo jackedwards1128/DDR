@@ -22,7 +22,7 @@ public class Button {
         this.height = height;
         this.text = text;
         this.color = color;
-        this.bigFont = new Font("arial", Font.PLAIN, 60);
+        this.bigFont = new Font("arial", Font.PLAIN, 50);
         this.function = function;
         this.visible = true;
     }
