@@ -305,6 +305,15 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                     case "testnotes":
                         song = new Song(this,"music/Skrt Skrt With Quavo !!! Shorts rap Migos Quavo.wav", "testnotes");
                         break;
+                    case "tweaker":
+                        song = new Song(this,"music/G3 - Tweaker.wav", "tweaker");
+                        break;
+                    case "darlingI":
+                        song = new Song(this,"music/Darling, I - Tyler The Creator.wav", "darlingI");
+                        break;
+                    case "thespins":
+                        song = new Song(this,"music/Mac Miller - The Spins (Clean Version).wav", "thespins");
+                        break;
                 }
 
             }

@@ -36,6 +36,8 @@ public class FrontEnd extends JFrame {
         this.unce = new ArrayList<Double>();
         this.unceCooldown = 0;
 
+        Color unmapped = new Color(128, 0 ,0);
+
         buttons.add(new Button(this, 1170, 50, 300, 90, "Exit Song", Color.red, "exit"));
 
         buttons.add(new Button(this, 950, 100, 450, 200, "Map Song", Color.red, "map"));
@@ -47,13 +49,13 @@ public class FrontEnd extends JFrame {
         buttons.add(new Button(this, 50, 280, 400, 95, "Take U", Color.lightGray, "takeu"));
         buttons.add(new Button(this, 50, 390, 400, 95, "Luther", Color.lightGray, "luther"));
         buttons.add(new Button(this, 50, 500, 400, 95, "test", Color.lightGray, "testnotes"));
-        buttons.add(new Button(this, 50, 610, 400, 95, "Dark Thoughts", Color.lightGray, "darkthoughts"));
-        buttons.add(new Button(this, 50, 720, 400, 95, "Unwritten", Color.lightGray, "unwritten"));
+        buttons.add(new Button(this, 50, 610, 400, 95, "Dark Thoughts", Color.green, "darkthoughts"));
+        buttons.add(new Button(this, 50, 720, 400, 95, "Unwritten", unmapped, "unwritten"));
         buttons.add(new Button(this, 50, 830, 400, 95, "Tweaker", Color.lightGray, "tweaker"));
-        buttons.add(new Button(this, 480, 60, 400, 95, "Darling, I", Color.lightGray, "darlingI"));
-        buttons.add(new Button(this, 480, 170, 400, 95, "The Spins", Color.lightGray, "thespins"));
-        buttons.add(new Button(this, 480, 280, 400, 95, "Von Dutch", Color.lightGray, "vondutch"));
-        buttons.add(new Button(this, 480, 390, 400, 95, "Under Your Spell", Color.lightGray, "underyourspell"));
+        buttons.add(new Button(this, 480, 60, 400, 95, "Darling, I", unmapped, "darlingI"));
+        buttons.add(new Button(this, 480, 170, 400, 95, "The Spins", Color.green, "thespins"));
+        buttons.add(new Button(this, 480, 280, 400, 95, "", unmapped, "vondutch"));
+        buttons.add(new Button(this, 480, 390, 400, 95, "Under Your Spell", unmapped, "underyourspell"));
 
         this.fx = new ArrayList<Effect>();
 
@@ -157,6 +159,13 @@ public class FrontEnd extends JFrame {
                     case "takeu":
                     case "luther":
                     case "testnotes":
+                    case "darkthoughts":
+                    case "unwritten":
+                    case "tweaker":
+                    case "darlingI":
+                    case "thespins":
+                    case "vondutch":
+                    case "underyourspell":
                         b.hide();
                         break;
                     case "exit":
@@ -180,6 +189,13 @@ public class FrontEnd extends JFrame {
                     case "takeu":
                     case "luther":
                     case "testnotes":
+                    case "darkthoughts":
+                    case "unwritten":
+                    case "tweaker":
+                    case "darlingI":
+                    case "thespins":
+                    case "vondutch":
+                    case "underyourspell":
                         b.show();
                         break;
                     case "exit":
