@@ -3,6 +3,7 @@ import java.awt.*;
 import static java.lang.Math.round;
 
 public class Button {
+    // Instance variables
     private FrontEnd window;
     private int x;
     private int y;
@@ -29,6 +30,7 @@ public class Button {
 
     public void draw(Graphics g) {
         if (visible) {
+            // Draw color block of button
             g.setColor(color);
             g.fillRect(x, y, width, height);
             g.setColor(Color.white);
@@ -38,10 +40,12 @@ public class Button {
 
             int pixLength = (int)((bigFont.getSize() * strLength) / 2);
 
+            // Draw text in middle of button
             g.drawString(text, x + ((width - pixLength) / 2), y+height - ((height-bigFont.getSize()) / 2));
         }
     }
 
+    // Check whether the button is being hovered over by the mouse
     public boolean isClicked(int cx, int cy) {
         if (visible) {
             if (cx < x || cx > x+ width) {
@@ -56,6 +60,7 @@ public class Button {
 
     }
 
+    // Used to move the exit button around
     public void changePosition(int newX, int newY) {
         x = newX;
         y = newY;

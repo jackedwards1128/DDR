@@ -18,6 +18,7 @@ public class SoundPlayer implements LineListener {
     private AudioInputStream audioStream;
 
     @Override
+    // Checks the status of the audio stream
     public void update(LineEvent event) {
         // Receives line events
         if (LineEvent.Type.START == event.getType()) {

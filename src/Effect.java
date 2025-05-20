@@ -1,6 +1,7 @@
 import java.awt.*;
 
 public class Effect {
+    // Instance variables
     private int type;
     private int arrow;
     private double originTime;
@@ -16,7 +17,7 @@ public class Effect {
         this.arrow = arrow;
         this.secondPlayer = secondPlayer;
 
-
+        // Depending on whether the image can be rotated or not, set the correct image to be loaded
         if (arrow == 0 || arrow == 3 || type == 3) {
             image = window.effectImages[type];
         } else {
@@ -33,7 +34,7 @@ public class Effect {
                 offset = -55;
         }
 
-
+        // Draw the arrow at the correction position
         switch (arrow) {
             case 0:
                 g.drawImage(image, offset + 87, 111, 160, 160, window);
@@ -42,9 +43,11 @@ public class Effect {
                 g.drawImage(image, offset + 246, 113, 160, 160, window);
                 break;
             case 2:
+                // Reflect over x-axis
                 g.drawImage(image, offset + 408, 273, 160, -160, window);
                 break;
             case 3:
+                // Reflect over y-axis
                 g.drawImage(image, offset + 734, 113, -160, 160, window);
                 break;
         }

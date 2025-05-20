@@ -104,6 +104,14 @@ public class ArduinoParser implements ActionListener {
                                 result = result + "R";
                                 datapresent = true;
                             }
+                            if(text.indexOf("U") != -1) {
+                                result = result + "U";
+                                datapresent = true;
+                            }
+                            if(text.indexOf("D") != -1) {
+                                result = result + "D";
+                                datapresent = true;
+                            }
                             if (datapresent) {
                                 comPorts[port].closePort();
                                 text.setLength(0);
@@ -158,6 +166,18 @@ public class ArduinoParser implements ActionListener {
             if(result.indexOf("R") != -1) {
                 if (!presses.contains("R")) {
                     presses = presses + "R";
+                }
+                data = true;
+            }
+            if(result.indexOf("U") != -1) {
+                if (!presses.contains("U")) {
+                    presses = presses + "U";
+                }
+                data = true;
+            }
+            if(result.indexOf("D") != -1) {
+                if (!presses.contains("D")) {
+                    presses = presses + "D";
                 }
                 data = true;
             }

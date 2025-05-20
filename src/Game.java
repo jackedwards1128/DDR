@@ -1,10 +1,19 @@
+/*
+            DANCE DANCE REVOLUTION
+                BY JACK EDWARDS
+        FOR CS2 TAUGHT BY MS. NAMASIVAYAM
+                MENLO SCHOOL
+    DO NOT DISTRIBUTE, UNLICENSED MUSIC PRESENT
+ */
+
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class Game implements ActionListener, KeyListener, MouseListener, MouseMotionListener {
-
+    // Instance Variables
     private SoundPlayer jukebox;
     private FrontEnd window;
     private ArduinoParser arduino;
@@ -17,17 +26,14 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
     private Song song;
     private static final int MILLISECOND = 1000;
     private static final int DIVISOR = 70;
-    private int tick = 0;
     private int score;
     private int scoreSecond;
-    private double BPM;
     private boolean songEnded;
 
     private String mapString;
     private String mapString2;
     private String unceString;
     private boolean mappingMode;
-    private int mapChunk;
     private Timer clock;
 
     public Game() {
@@ -42,21 +48,17 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
         this.mapString2 = "";
         this.unceString = "";
         this.mappingMode = false;
-        this.mapChunk = 0;
         this.time = 0;
         this.songEnded = false;
+        // This line of code is uncommented if the psychical interface is used
 //        this.arduino = new ArduinoParser(this);
         this.averageTimeGap = 20;
         this.score = 0;
-        this.BPM = 148;
         this.upcomingArrows = new ArrayList<Arrow>();
         this.upcomingArrowsSecond = new ArrayList<Arrow>();
 
-//        song = new Song(this,"music/Fetty Wap - Trap Queen.wav", "trapqueen");
-        song = new Song(this,"music/Skrt Skrt With Quavo !!! Shorts rap Migos Quavo.wav", "testnotes");
-//        song = new Song(this, "music/NOKIA.wav", "nokia");
-//        song = new Song(this, "music/Jengi - Take U.wav", "takeu");
-//        song = new Song(this, "music/Kendrick Lamar - luther.wav", "luther");
+        // Song is set to trap queen by default
+        song = new Song(this,"music/Fetty Wap - Trap Queen.wav", "trapqueen");
 
         mappingMode = false;
 
@@ -66,7 +68,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
     }
 
 
-
+    // Check if song audio is over, if it is, switch the game state to display information
     public void StopMusic() {
         if(this.jukebox.getIsPlaybackComplete()) {
             System.out.println("Song over");
@@ -82,15 +84,18 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
         }
     }
 
+    // Runs every frame
     public void actionPerformed(ActionEvent e) {
-
-        tick++;
 
         window.repaint();
 
+        // VSyncs game to match real time
         double difference = (System.currentTimeMillis() % 1000) - millis;
         millis = System.currentTimeMillis() % 1000;
 
+        // Because we are storing the time in milliseconds but resetting every 1000ms for memory, there will be gaps
+        // Where the difference jumps from say 9978 to 0011. This negative difference is accounted for by keeping
+        // track of the average frame rate and just incrementing the tick amount by that time.
         if (difference > 0) {
             time += difference / 1000;
             averageTimeGap += difference;
@@ -99,23 +104,26 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
             time += averageTimeGap / 1000;
         }
 
-
-
+        // If no more mapped arrows, check if it's the end of the song
         if(upcomingArrows.size() == 0 && upcomingArrowsSecond.size() == 0) {
             StopMusic();
         }
 
+        // If arrows are 200ms past the timing, automatically remove them and deduct score
         if (upcomingArrows.size() > 0) {
             if (time - upcomingArrows.get(0).getHitTime() > 0.2) {
                 upcomingArrows.remove(0);
-                score -= 150;
+                // Score deduction temporarily removed for the confidence of Share Fair participants using
+                // the physical interface
+                score -= 0;
             }
         }
 
+        // See above
         if (upcomingArrowsSecond.size() > 0) {
             if (time - upcomingArrowsSecond.get(0).getHitTime() > 0.2) {
                 upcomingArrowsSecond.remove(0);
-                scoreSecond -= 150;
+                scoreSecond -= 0;
             }
         }
     }
@@ -134,6 +142,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
     @Override
     public void keyPressed(KeyEvent e) {
+        // Keyboard input, runs function to check timing
         switch(e.getKeyCode())
         {
             case KeyEvent.VK_LEFT:
@@ -149,6 +158,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                 checkTiming(3);
                 break;
         }
+        // For the WASD keys to be used by the second player
         if(window.getGameState().equals("two player song")) {
             switch(e.getKeyCode())
             {
@@ -166,6 +176,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                     break;
             }
         }
+        // Maps notes when in mapping mode
         if(mappingMode) {
             switch(e.getKeyCode())
             {
@@ -185,6 +196,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                     map(-1);
                     break;
             }
+            // For mapping the second player independently (luther) for asynchronous 2 player gameplay
             switch(e.getKeyCode())
             {
                 case KeyEvent.VK_A:
@@ -209,11 +221,13 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
         int x = e.getX();
         int y = e.getY();
 
+        // Checks if any buttons are clicked
         for(Button b : window.getButtons()) {
             if (b.isClicked(x, y)) {
-
+                // checks the function of any buttons pressed
                 switch (b.getFunction()) {
                     case "start":
+                        // Initiates a single player song
                         window.setState("single player song");
                         time = 0;
 
@@ -234,6 +248,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                         b.hide();
                         break;
                     case "twoplayer":
+                        // Initiates a two player song
                         window.setState("two player song");
                         time = 0;
 
@@ -254,9 +269,9 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                         b.hide();
                         break;
                     case "map":
+                        // Initiates a single player song to be mapped using arrow keys
                         window.setState("single player song");
                         time = 0;
-
 
                         mappingMode = true;
 
@@ -270,6 +285,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                         b.hide();
                         break;
                     case "exit":
+                        // Exits current song
                         songEnded = true;
                         window.setState("menu");
                         clock.stop();
@@ -290,6 +306,8 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                         mapPrint();
                         System.out.println("unce: " + unceString);
                         song.clearMapString();
+                        break;
+                    // The following set the song to the respective song selected by the user
                     case "trapqueen":
                         song = new Song(this,"music/Fetty Wap - Trap Queen.wav", "trapqueen");
                         break;
@@ -320,6 +338,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
         }
     }
 
+    // Gets Song class to load the map string into the Arrows arraylist
     public void loadArrows() {
         if(mappingMode == false) {
             if (song.getName() != "luther") {
@@ -373,10 +392,12 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
         //
     }
 
+    // Uses time variable to check how close the user pressed key to the timing
     public void checkTiming(int direction) {
         Arrow nextInDirection = null;
         if (direction < 4) {
             int i = 0;
+            // Finds first instance of an arrow mathcing the direciton in the arrows array
             while(i < upcomingArrows.size()) {
                 if (upcomingArrows.get(i).getDirection() == direction) {
                     nextInDirection = upcomingArrows.get(i);
@@ -388,7 +409,9 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                 return;
             }
             if (Math.abs(nextInDirection.getHitTime() - time) > 0.3) {
-                score -= 250;
+                // Score deduction temporarily removed for the confidence of Share Fair participants
+                // using the physical interface
+                score -= 0;
                 window.createEffect(3, direction, time, false);
                 return;
             }
@@ -411,6 +434,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                 return;
             }
         } else {
+            // Do the same for the second player
             int equiv_dir = direction - 4;
             int i = 0;
             while(i < upcomingArrowsSecond.size()) {
@@ -424,7 +448,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
                 return;
             }
             if (Math.abs(nextInDirection.getHitTime() - time) > 0.3) {
-                scoreSecond -= 250;
+                scoreSecond -= 0;
                 window.createEffect(3, equiv_dir, time, true);
                 return;
             }
@@ -451,6 +475,7 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
     }
 
+    // Input direction and use time variable to store mapped timing in string
     public void map(int dir) {
         if (dir == -1) {
             unceString += "U" + Math.round(time * 100);
@@ -463,11 +488,13 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
     }
 
+    // Prints out the mapping strings to be copied from terminal during development
     public void mapPrint() {
         System.out.println("mapping: " + mapString);
         System.out.println("mapping2: " + mapString2);
     }
 
+    // Used to load arrows into the arrow arraylist
     public void addArrow(double hitTime, int dir, boolean second) {
         if (second) {
             upcomingArrowsSecond.add(new Arrow(this, window, dir, hitTime, true));
@@ -476,13 +503,19 @@ public class Game implements ActionListener, KeyListener, MouseListener, MouseMo
 
     }
 
+    // Used by physical interface to transfer input to the timing checks
     public void acceptData(String data) {
-//        System.out.println("accepting");
         if (data.indexOf("L") != -1) {
             checkTiming(3);
         }
         if (data.indexOf("R") != -1) {
             checkTiming(0);
+        }
+        if (data.indexOf("U") != -1) {
+            checkTiming(2);
+        }
+        if (data.indexOf("D") != -1) {
+            checkTiming(1);
         }
     }
 

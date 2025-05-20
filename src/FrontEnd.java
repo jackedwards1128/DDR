@@ -4,7 +4,7 @@ import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
 public class FrontEnd extends JFrame {
-
+    // Instance variables
     private Game backend;
 
     private String state;
@@ -24,9 +24,6 @@ public class FrontEnd extends JFrame {
     private ArrayList<Double> unce;
     private double unceCooldown;
 
-    private int testbpm = 132;
-//    private Color low = new Color(150, 150, 150);
-//    private Color low = new Color(70, 80, 90);
     private Color low = Color.white;
     private Color high = new Color(240, 200, 200);
 
@@ -38,6 +35,8 @@ public class FrontEnd extends JFrame {
 
         Color unmapped = new Color(128, 0 ,0);
 
+        // Create all buttons for UI function and song selection
+
         buttons.add(new Button(this, 1170, 50, 300, 90, "Exit Song", Color.red, "exit"));
 
         buttons.add(new Button(this, 950, 100, 450, 200, "Map Song", Color.red, "map"));
@@ -48,20 +47,25 @@ public class FrontEnd extends JFrame {
         buttons.add(new Button(this, 50, 170, 400, 95, "Nokia", Color.lightGray, "nokia"));
         buttons.add(new Button(this, 50, 280, 400, 95, "Take U", Color.lightGray, "takeu"));
         buttons.add(new Button(this, 50, 390, 400, 95, "Luther", Color.lightGray, "luther"));
-        buttons.add(new Button(this, 50, 500, 400, 95, "test", Color.lightGray, "testnotes"));
-        buttons.add(new Button(this, 50, 610, 400, 95, "Dark Thoughts", Color.green, "darkthoughts"));
-        buttons.add(new Button(this, 50, 720, 400, 95, "Unwritten", unmapped, "unwritten"));
-        buttons.add(new Button(this, 50, 830, 400, 95, "Tweaker", Color.lightGray, "tweaker"));
-        buttons.add(new Button(this, 480, 60, 400, 95, "Darling, I", unmapped, "darlingI"));
-        buttons.add(new Button(this, 480, 170, 400, 95, "The Spins", Color.green, "thespins"));
-        buttons.add(new Button(this, 480, 280, 400, 95, "", unmapped, "vondutch"));
-        buttons.add(new Button(this, 480, 390, 400, 95, "Under Your Spell", unmapped, "underyourspell"));
+//        buttons.add(new Button(this, 50, 500, 400, 95, "test", Color.lightGray, "testnotes"));
+//        buttons.add(new Button(this, 50, 500, 400, 95, "", Color.lightGray, "testnotes"));
+//        buttons.add(new Button(this, 50, 610, 400, 95, "Dark Thoughts", Color.green, "darkthoughts"));
+//        buttons.add(new Button(this, 50, 610, 400, 95, "", Color.green, "darkthoughts"));
+//        buttons.add(new Button(this, 50, 720, 400, 95, "Unwritten", unmapped, "unwritten"));
+//        buttons.add(new Button(this, 50, 720, 400, 95, "", unmapped, "unwritten"));
+        buttons.add(new Button(this, 50, 500, 400, 95, "Tweaker", Color.lightGray, "tweaker"));
+        buttons.add(new Button(this, 480, 60, 400, 95, "Darling, I", Color.lightGray, "darlingI"));
+//        buttons.add(new Button(this, 480, 60, 400, 95, "", unmapped, "darlingI"));
+        buttons.add(new Button(this, 50, 610, 400, 95, "The Spins", Color.lightGray, "thespins"));
+//        buttons.add(new Button(this, 480, 280, 400, 95, "", unmapped, "vondutch"));
+//        buttons.add(new Button(this, 480, 390, 400, 95, "Under Your Spell", unmapped, "underyourspell"));
+//        buttons.add(new Button(this, 480, 390, 400, 95, "", unmapped, "underyourspell"));
 
         this.fx = new ArrayList<Effect>();
 
 
 
-
+        // Initialize images
         this.arrowImages = new Image[5];
         this.effectImages = new Image[7];
         arrowImages[0] = new ImageIcon("Resouces/images/left_arrow.png").getImage();
@@ -105,10 +109,8 @@ public class FrontEnd extends JFrame {
 
     public void myPaint(Graphics g) {
         if (state == "single player song" || state == "two player song") {
-//            if (backend.isMappingMode())
-                g.setColor(Color.white);
-//            else
-//                g.setColor(unceUnceUnceUnce());
+            // Paint basic song screen
+            g.setColor(Color.white);
 
             g.fillRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -124,6 +126,7 @@ public class FrontEnd extends JFrame {
             Font smallFont = new Font("arial", Font.PLAIN, 70);
             g.setColor(Color.black);
             g.setFont(smallFont);
+            // Print scores
             if (state == "two player song") {
                 if (backend.getSong().getName() == "luther") {
                     g.drawString("Score: " + (backend.getScoreSecond() + backend.getScore()), 100, 100);
@@ -134,6 +137,7 @@ public class FrontEnd extends JFrame {
             } else
                 g.drawString("Score: " + backend.getScore(), 100, 100);
 
+            // Draw Arrows
             for (Arrow arrow : backend.getUpcomingArrows()) {
                 arrow.draw(g);
             }
@@ -141,14 +145,19 @@ public class FrontEnd extends JFrame {
                 arrow.draw(g);
             }
 
+            // Remove outdated effects
             if (fx.size() > 0) {
                 if (backend.getTime() - fx.get(0).getOriginTime() > EFFECT_DURATION) {
                     fx.remove(0);
                 }
             }
+
+            // Draw effects
             for (Effect fX: fx) {
                 fX.draw(g);
             }
+
+            // Draw buttons if they are on the correct screen
             for (Button b : buttons) {
                 switch(b.getFunction()) {
                     case "start":
@@ -205,6 +214,7 @@ public class FrontEnd extends JFrame {
                 b.draw(g);
             }
         } else if (state == "song over") {
+            // Draw game over screen and print score(s)
             g.setColor(Color.darkGray);
             g.fillRect(0,0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -231,6 +241,7 @@ public class FrontEnd extends JFrame {
 
     }
 
+    // Outdated function used to make background flash to the beat. May be implemented in future
     public Color unceUnceUnceUnce() {
 
         if (unceCooldown > 0)
@@ -266,37 +277,17 @@ public class FrontEnd extends JFrame {
         return buttons;
     }
 
-    public void loadUnce() {
-        String unces = backend.getSong().getUnceString();
-        while (unces.indexOf("U") != -1 && unces.length() != 1) {
-            System.out.println(unces);
-            unces = unces.substring(1);
-            System.out.println(unces);
-            double time = Float.parseFloat(unces.substring(0,unces.indexOf("U"))) / 100;
-            unces = unces.substring(unces.indexOf("U"));
-            System.out.println(unces);
-            unce.add(time);
-        }
-        System.out.println(unce.size());
-    }
 
     public void deleteEffects() {
         fx.clear();
     }
 
+    // Moves the exit spot depending on whether a 2-player or 1-player song is being player
     public void switchExitSpot() {
         if (state == "two player song")
             buttons.get(0).changePosition(580, 20);
         else
             buttons.get(0).changePosition(1170, 50);
 
-    }
-
-    public boolean isTwoPlayerSync() {
-        // note: will have seperate state for async 2 player (luther)
-        if(state == "two player song") {
-            return true;
-        }
-        return false;
     }
 }
